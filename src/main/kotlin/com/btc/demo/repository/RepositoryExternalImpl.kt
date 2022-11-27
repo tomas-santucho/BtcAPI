@@ -4,18 +4,13 @@ import com.btc.demo.asLocalDateTime
 import com.btc.demo.getFiatType
 import com.btc.demo.getPrice
 import com.btc.demo.model.BTCPrice
+import com.btc.demo.repository.providers.JsonProvider
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.springframework.stereotype.Repository
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
-
-
-private const val URL = "https://api.coindesk.com/v1/bpi/currentprice.json"
 
 @Repository
-class RepositoryExternalImpl : RepositoryExternal {
+class RepositoryExternalImpl(private val jsonProvider: JsonProvider) : RepositoryExternal {
 
     object Keys {
         const val BPI = "bpi"
@@ -27,7 +22,7 @@ class RepositoryExternalImpl : RepositoryExternal {
     }
 
     override fun fetchCurrentPrice(): List<BTCPrice> {
-        val jsonObject: JsonObject = JsonParser.parseString(getJson()).asJsonObject
+        val jsonObject: JsonObject = JsonParser.parseString(jsonProvider.getJson().body).asJsonObject
         val bpi = jsonObject.getAsJsonObject(Keys.BPI)
         val time = jsonObject.getAsJsonObject(Keys.TIME).get(Keys.ISO).asLocalDateTime()
         val usd = bpi.getAsJsonObject(Keys.USD)
@@ -38,16 +33,5 @@ class RepositoryExternalImpl : RepositoryExternal {
             BTCPrice(null, gbp.getPrice(), time, gbp.getFiatType()),
             BTCPrice(null, eur.getPrice(), time, eur.getFiatType())
         )
-    }
-
-    private fun getJson(): String = URL(URL).openStream().use { input ->
-        val isr = InputStreamReader(input)
-        val reader = BufferedReader(isr)
-        val json = StringBuilder()
-        var c: Int
-        while (reader.read().also { c = it } != -1) {
-            json.append(c.toChar())
-        }
-        return json.toString()
     }
 }

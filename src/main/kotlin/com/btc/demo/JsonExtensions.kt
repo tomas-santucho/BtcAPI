@@ -4,7 +4,11 @@ import com.btc.demo.model.FiatType
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.math.BigDecimal
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 
 fun JsonObject.getFiatType() = when (this.get("code").asString) {
     FiatType.USD.name -> FiatType.USD
@@ -16,7 +20,7 @@ fun JsonObject.getFiatType() = when (this.get("code").asString) {
 fun JsonObject.getPrice() = BigDecimal(this.get("rate").asString.filterNot { it == ',' })
 
 fun JsonElement.asLocalDateTime(): LocalDateTime {
-    //val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss+SS.SS").withZone(ZoneId.of("UTC"))
-    //return LocalDateTime.parse(this.asString, formatter)
-    return LocalDateTime.now()
+    val timeFormatter = DateTimeFormatter.ISO_DATE_TIME
+    val accessor = timeFormatter.parse(this.asString)
+    return LocalDateTime.ofInstant(Instant.from(accessor), ZoneId.of("UTC"))
 }

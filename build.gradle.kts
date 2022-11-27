@@ -22,13 +22,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.squareup.moshi:moshi:1.14.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.code.gson:gson:2.10")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.h2database:h2")
+    testImplementation("io.strikt:strikt-core:0.34.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
 }
 
 tasks.withType<KotlinCompile> {
